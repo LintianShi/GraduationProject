@@ -1,0 +1,49 @@
+package dslabs.clientserver;
+
+import dslabs.framework.Client;
+import dslabs.framework.testing.junit.PrettyTestName;
+import dslabs.framework.testing.junit.RunTests;
+import dslabs.framework.testing.junit.SearchTests;
+import dslabs.framework.testing.junit.TestPointValue;
+import dslabs.framework.testing.junit.UnreliableTests;
+import dslabs.framework.testing.search.Search;
+import dslabs.kvstore.KVStoreWorkload;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runners.MethodSorters;
+
+import static dslabs.framework.testing.StatePredicate.CLIENTS_DONE;
+import static dslabs.framework.testing.StatePredicate.NONE_DECIDED;
+import static dslabs.framework.testing.StatePredicate.RESULTS_OK;
+import static dslabs.framework.testing.search.SearchResults.EndCondition.INVARIANT_VIOLATED;
+import static dslabs.framework.testing.search.SearchResults.EndCondition.SPACE_EXHAUSTED;
+import static dslabs.kvstore.KVStoreWorkload.APPENDS_LINEARIZABLE;
+import static dslabs.kvstore.KVStoreWorkload.appendAppendGet;
+import static dslabs.kvstore.KVStoreWorkload.appendDifferentKeyWorkload;
+import static dslabs.kvstore.KVStoreWorkload.appendSameKeyWorkload;
+import static dslabs.kvstore.KVStoreWorkload.differentKeysInfiniteWorkload;
+import static dslabs.kvstore.KVStoreWorkload.put;
+import static dslabs.kvstore.KVStoreWorkload.putAppendGetWorkload;
+import static dslabs.kvstore.KVStoreWorkload.putOk;
+import static dslabs.kvstore.KVStoreWorkload.simpleWorkload;
+import static org.junit.Assert.assertTrue;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public final class ClientServerPart3Test extends ClientServerBaseTest {
+    @Test(timeout = 15 * 1000)
+    @PrettyTestName("Single client basic operations")
+    @TestPointValue(100)
+    @Category({RunTests.class, UnreliableTests.class})
+    public void test01UnreliableClient() throws InterruptedException {
+        runSettings.networkDuplicateRate(0.5);
+
+        Client client1 = runState.addClient(client(1));
+        
+        runState.start(runSettings);
+	sendCommandAndCheck(client1, put("foo", "bar"), putOk());
+        runSettings.addInvariant(RESULTS_OK);
+        assertRunInvariantsHold();
+    }
+}

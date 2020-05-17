@@ -1,0 +1,12 @@
+# 添加网络功能
+## RunSettings
+* 添加networkDisorderRate和networkDuplicateRate
+* 添加boolean shouldDisorder()和boolean shouldDuplicate函数
+## Inbox
+* 原来有take()函数，返回一个Message或者Timer.
+* 现在将take()函数改为take(boolean disorder, boolean duplicate)函数.
+* 如果duplicate为true，则使用peek()函数获取队列头部的元素，而不是poll().
+* 如果disorder为true，则首先shuffle消息队列
+## RunState
+* 在RunState里，Node执行一个线程，不断从对应的inbox里使用take()函数获取一个Message或者Timer.
+* 现在Node执行一个线程，先通过runSettings计算shouldDuplicate和shouldDisorder，然后参数传给take函数

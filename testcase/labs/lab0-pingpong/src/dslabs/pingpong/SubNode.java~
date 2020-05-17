@@ -1,0 +1,48 @@
+package dslabs.pingpong;
+
+import dslabs.framework.Address;
+import dslabs.framework.Client;
+import dslabs.framework.Command;
+import dslabs.framework.Node;
+import dslabs.framework.ByzantineMessage;
+import dslabs.framework.Result;
+import dslabs.pingpong.PingApplication.Ping;
+import dslabs.pingpong.PingApplication.Pong;
+
+public class SubNode extends ByzantineMessage implements Client {
+    private final Address serverAddress;
+
+    public SubNode(Address address, Address serverAddress) {
+        super(address);
+        this.serverAddress = serverAddress;
+    }
+
+    public synchronized void init() {
+        ;
+    }
+
+    @Override
+    public synchronized void sendCommand(Command command) {
+        if (!(command instanceof Ping)) {
+            throw new IllegalArgumentException();
+        }  
+    }
+
+    @Override
+    public synchronized boolean hasResult() {
+        return false;
+    }
+
+    @Override
+    public synchronized Result getResult() throws InterruptedException {
+        return null;
+    }
+
+    private synchronized void handlePingRequest(PingRequest m, Address sender) {
+        arbitrarySend(serverAddress);
+    }
+
+    private synchronized void handlePongReply(PongReply m, Address sender) {
+
+    }
+}

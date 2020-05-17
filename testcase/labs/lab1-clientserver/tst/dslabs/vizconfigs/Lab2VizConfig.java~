@@ -1,0 +1,6 @@
+package dslabs.vizconfigs;
+
+import dslabs.clientserveramo.CSVizConfig;
+
+public class Lab2VizConfig extends CSVizConfig {
+}
